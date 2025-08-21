@@ -190,7 +190,7 @@ async def run(key, method, format, **kwargs):
                                 transcript = subtitle_formatter(res, format)
                             print(transcript)
                             all_transcripts.append(transcript)
-
+                            transcribe_audio(transcript_path="transcript.txt", transcript=transcript)
                         # if using the microphone, close stream if user says "goodbye"
                         if method == "mic" and "goodbye" in transcript.lower():
                             await ws.send(json.dumps({"type": "CloseStream"}))
@@ -469,6 +469,26 @@ def main():
         print(f"🔴 ERROR: Something went wrong! {e}")
         return
 
+def transcribe_audio(transcript_path, transcript="This is the transcribed speech text."):
+    # Simulate transcription
+    #transcript = "This is the transcribed speech text."
+    temp_path = transcript_path + ".tmp"
+    print(f"Writing transcript to {temp_path}...", transcript)
+    # Write to a temporary file first
+    with open(temp_path, "a", encoding="utf-8") as f:
+        f.write(transcript)
+
+    # Append contents of temp_path to transcript_path
+    # with open(temp_path, "r", encoding="utf-8") as temp_file:
+    #     temp_contents = temp_file.read()
+    # with open(transcript_path, "a", encoding="utf-8") as transcript_file:
+    #     transcript_file.write(temp_contents)
+
+    # Optionally, remove the temp file
+    #os.remove(temp_path)
+
+    # Rename to final path (atomic)
+    os.replace(temp_path, transcript_path)
 
 if __name__ == "__main__":
     sys.exit(main() or 0)
